@@ -1,6 +1,11 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, UserToken
 from django.contrib.auth import authenticate
+from django.core.validators import EmailValidator
+from django.core.exceptions import ObjectDoesNotExist
+
+
+from django.conf import settings
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -80,3 +85,27 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+class ForgotPasswordSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserToken
+        fields = '__all__'
+
+    # def create(self, validated_data):
+
+    #     # print(validated_data)
+    #     userId = validated_data.user
+    #     token = validated_data.token
+    #     user_token = UserToken.objects.create(user=userId, token=token)
+    #     user_token = user_token.token
+    #     msg = 'User with this email does not exist'
+    #     raise ObjectDoesNotExist(msg)
+
+    #     if user_token:
+    #         print('usr token')
+
+    #         return {'msg': 'email sent'}
+    #     else:
+    #         return {"msg": "error"}

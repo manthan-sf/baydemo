@@ -36,7 +36,7 @@ class UserManager(BaseUserManager):
         return self.create_user(username, password, **extra_fields)
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(db_index=True, max_length=255, unique=True)
     first_name = models.CharField(max_length=30, default="")
     last_name = models.CharField(max_length=30, default="")
@@ -92,3 +92,13 @@ class User(AbstractBaseUser):
         }, settings.SECRET_KEY, algorithm='HS256')
         print(token.decode('utf-8'))
         return token.decode('utf-8')
+
+
+class UserToken(models.Model):
+    user = models.ForeignKey(
+        User, related_name='user_tokens', on_delete=models.CASCADE)
+    token = models.CharField(max_length=255, null=True, blank=True)
+    created = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.token
